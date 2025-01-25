@@ -49,6 +49,41 @@ Example Responses:
 List of Status Codes to Handle:
 200, 201, 204, 400, 401, 403, 404, 405, 429, 500, 502, 503, 504
 */
+const statusDescriptions = {
+  200: "OK",
+  201: "Created",
+  400: "Bad Request",
+  401: "Unauthorized",
+  403: "Forbidden",
+  404: "Not Found",
+  500: "Internal Server Error",
+  502: "Bad Gateway",
+  503: "Service Unavailable"
+};
+
+// GET endpoint to fetch status info
+app.get('/status-info', (req, res) => {
+  const { code } = req.query;
+
+  // Check if code is provided and is a valid status code
+  if (!code) {
+    return res.status(400).json({ error: "Code query parameter is required" });
+  }
+
+  const statusCode = parseInt(code);
+
+  // Validate if the status code exists in the mapping
+  if (statusDescriptions[statusCode]) {
+    return res.status(statusCode).json({
+      code: statusCode,
+      description: statusDescriptions[statusCode]
+    });
+  } else {
+    return res.status(404).json({
+      error: `Status code ${statusCode} not found`
+    });
+  }
+});
 
 const PORT = 3000;
 app.listen(PORT, () => {
